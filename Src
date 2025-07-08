@@ -1,0 +1,109 @@
+import java.sql.*;
+import java.util.Scanner;
+
+// Class for DB Connection
+class DBConnection {
+    public static Connection getConnection() {
+        try {
+            // Replace your database details
+            String url = "jdbc:postgresql://localhost:5432/studentdb";
+            String user = "postgres";
+            String pass = "your_password";
+            return DriverManager.getConnection(url, user, pass);
+        } catch (SQLException e) {
+            System.out.println("DB Connection Error: " + e.getMessage());
+            return null;
+        }
+    }
+}
+
+// Student Model Class
+class Student {
+    int id;
+    String name;
+    int age;
+
+    Student(int id, String name, int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+}
+
+// DAO class to handle DB operations
+class StudentDAO {
+    public void addStudent(Student student) {
+        try (Connection con = DBConnection.getConnection()) {
+            String sql = "INSERT INTO students (id, name, age) VALUES (?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, student.id);
+            ps.setString(2, student.name);
+            ps.setInt(3, student.age);
+            ps.executeUpdate();
+            System.out.println("âœ… Student added successfully.");
+        } catch (Exception e) {
+            System.out.println("Error while adding student: " + e);
+        }
+    }
+
+    public void displayStudents() {
+        try (Connection con = DBConnection.getConnection()) {
+            String sql = "SELECT * FROM students";
+            ResultSet rs = con.createStatement().executeQuery(sql);
+            System.out.println("\n--- Student List ---");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") +
+                                   ", Name: " + rs.getString("name") +
+                                   ", Age: " + rs.getInt("age"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error while fetching students: " + e);
+        }
+    }
+}
+
+// Main class
+public class StudentManagement {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        StudentDAO dao = new StudentDAO();
+        int choice;
+
+        do {
+            System.out.println("\n==== Student Management Menu ====");
+            System.out.println("1. Add Student");
+            System.out.println("2. View Students");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine(); // consume newline
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Age: ");
+                    int age = sc.nextInt();
+                    Student s = new Student(id, name, age);
+                    dao.addStudent(s);
+                    break;
+
+                case 2:
+                    dao.displayStudents();
+                    break;
+
+                case 3:
+                    System.out.println("ðŸ‘‹ Exiting program...");
+                    break;
+
+                default:
+                    System.out.println("âš ï¸ Invalid option. Try again.");
+            }
+
+        } while (choice != 3);
+
+        sc.close();
+    }
+}
