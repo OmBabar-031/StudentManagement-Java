@@ -34,20 +34,20 @@ A simple **Java Console-based Student Management System** built using **Object-O
 - PostgreSQL installed and running
 - Maven installed
 - IDE or terminal
+- Java Multithreading
+- Java File I/O
+  
 
 ###  Project Setup
 
 1. Clone the repository:
 
 `bash
-git clone https://github.com/ombabar-031/Student Management-Java.git
-cd Student Management-Java 
+git clone https://github.com/ombabar-031/Student Management-Java.
+git cd Student Management-Java
 
 
-
-2. Configure PostgreSQL:
-
-Create a PostgreSQL database (e.g., student_db)
+2. Configure PostgreSQL
 
 Create a table using the SQL below:
 
